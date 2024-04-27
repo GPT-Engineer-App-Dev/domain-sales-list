@@ -23,6 +23,18 @@ const Index = () => {
     setClicks(clicks + 1);
   };
 
+  // Add domain function
+  const handleAddDomain = async () => {
+    if (newDomain.trim() === '') return;
+    const success = await client.set('domains', [...domains, newDomain.trim()]);
+    if (success) {
+      setDomains([...domains, newDomain.trim()]);
+      setNewDomain('');
+    } else {
+      console.error('Failed to add domain');
+    }
+  };
+
   // effect
   useEffect(() => {
     // fetch data
