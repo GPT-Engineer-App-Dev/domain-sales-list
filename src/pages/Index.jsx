@@ -1,6 +1,6 @@
 // Complete the Index page component here
 // Use chakra-ui
-import { Button } from "@chakra-ui/react"; // example
+import { Box, VStack, Input, Button, List, ListItem, Heading } from '@chakra-ui/react';
 import { FaPlus } from "react-icons/fa"; // example - use react-icons/fa for icons
 import { getClient } from "lib/supabase";
 
@@ -12,6 +12,8 @@ const Index = () => {
 
   // state mgmt
   const [objects, setObjects] = useState([]);
+  const [domains, setDomains] = useState([]);
+  const [newDomain, setNewDomain] = useState('');
   const [clicks, setClicks] = useState(0);
   
   // write onClick function
@@ -26,22 +28,35 @@ const Index = () => {
     // fetch data
     const fetchData = async () => {
       const client = getClient('testproject');
-      const { data, error } = await client.get(key);
+      const { data, error } = await client.from('domains').select('*');
       if (error) {
-        console.error("error", error);
+        console.error("Failed to fetch domains", error);
       } else {
-        console.log("data", data);
+        console.log("Fetched domains", data);
       }
-      setObjects(data);
+      setDomains(data);
     };  
     fetchData();
   }, []);
 
   // TODO: Create the website here!
   return (
-    <Button onClick={handleClick} leftIcon={<FaPlus />}>
-      Hello world! <FaPlus />
-    </Button>
+    <Box p={5}>
+    <VStack spacing={4}>
+      <Heading as="h1" size="xl">Domain Sales List</Heading>
+      <Input
+        placeholder="Add new domain"
+        value={newDomain}
+        onChange={(e) => setNewDomain(e.target.value)}
+      />
+      <Button onClick={handleAddDomain} colorScheme="blue">Add Domain</Button>
+      <List spacing={3}>
+        {domains.map((domain, index) => (
+          <ListItem key={index}>{domain}</ListItem>
+        ))}
+      </List>
+    </VStack>
+  </Box>
   ); // example
 };
 
